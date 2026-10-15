@@ -98,6 +98,11 @@ pub fn remove_local_stock(state: tauri::State<'_, Arc<AppState>>, market: String
 }
 
 #[tauri::command]
+pub async fn search_stocks(query: String) -> Result<Vec<crate::market::Item>, String> {
+    crate::market::search(&query, 20).await.map_err(|e| format!("{e:#}"))
+}
+
+#[tauri::command]
 pub async fn get_kline(symbol: String, period: String) -> Result<KlineData, String> {
     let client = http_client();
     kline::fetch_kline(&client, &symbol, &period)

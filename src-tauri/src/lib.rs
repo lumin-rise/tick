@@ -1,5 +1,6 @@
 mod commands;
 mod kline;
+mod market;
 mod models;
 mod quotes;
 mod state;
@@ -53,6 +54,7 @@ pub fn run() {
             commands::remove_local_stock,
             commands::get_kline,
             commands::set_settings,
+            commands::search_stocks,
             ths_login::open_ths_login,
             ths_login::confirm_ths_login,
             ths_login::open_ths_forgot,

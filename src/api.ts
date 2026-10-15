@@ -15,6 +15,8 @@ export const api = {
     invoke<void>("remove_local_stock", { market, code }),
   getKline: (symbol: string, period: "day" | "minute") =>
     invoke<KlineData>("get_kline", { symbol, period }),
+  searchStocks: (query: string) =>
+    invoke<{ market: string; code: string; name: string; pinyin: string }[]>("search_stocks", { query }),
   setSettings: (settings: Settings) => invoke<void>("set_settings", { settings }),
   openThsLogin: () => invoke<void>("open_ths_login"),
   confirmThsLogin: () => invoke<StateSnapshot>("confirm_ths_login"),

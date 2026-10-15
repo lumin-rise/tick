@@ -26,6 +26,7 @@ serde_json = "1"
 tokio = { version = "1", features = ["rt-multi-thread", "macros", "time"] }
 reqwest = { version = "0.12", default-features = false, features = ["rustls-tls", "gzip", "json"] }
 encoding_rs = "0.8"
+pinyin = "0.10"
 rsa = { version = "0.9", features = ["pem"] }
 rand = "0.8"
 base64 = "0.22"
