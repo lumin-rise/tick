@@ -26,8 +26,8 @@ export interface Quote {
   turnover: number;
   time: string;
   kind: "stock" | "index" | string;
-  /** 集合竞价成交量（手），仅 A 股 */
-  auction_volume?: number | null;
+  /** 集合竞价成交金额（元），仅 A 股 */
+  auction_amount?: number | null;
 }
 
 export interface Settings {

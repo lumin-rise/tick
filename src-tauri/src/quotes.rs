@@ -78,7 +78,7 @@ fn parse_line(line: &str) -> Option<Quote> {
         turnover,
         time,
         kind,
-        auction_volume: None,
+        auction_amount: None,
     })
 }
 

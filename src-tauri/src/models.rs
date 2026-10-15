@@ -49,9 +49,9 @@ pub struct Quote {
     pub time: String,
     /// 类型：stock / index
     pub kind: String,
-    /// 集合竞价成交量（手），仅 A 股；竞价期间实时采集或盘后从分时回填
+    /// 集合竞价成交金额（元），仅 A 股；竞价期间实时采集或盘后从分时回填
     #[serde(default)]
-    pub auction_volume: Option<f64>,
+    pub auction_amount: Option<f64>,
 }
 
 /// K 线数据（详情弹窗用）

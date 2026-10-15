@@ -31,6 +31,12 @@ impl AppState {
     pub fn new(data_path: PathBuf) -> Self {
         let p: Persisted = store::load(&data_path);
         let logged_in = !p.cookie.is_empty();
+        // 旧版竞价数据是手数、新版是金额（元），单位不匹配则丢弃
+        let (auction_volumes, auction_date) = if p.auction_unit.as_deref() == Some("cny") {
+            (p.auction_volumes, p.auction_date)
+        } else {
+            (Default::default(), String::new())
+        };
         Self {
             inner: Mutex::new(Inner {
                 cookie: p.cookie,
@@ -39,8 +45,8 @@ impl AppState {
                 local_stocks: p.local_stocks,
                 settings: p.settings,
                 last_sync: p.last_sync,
-                auction_volumes: p.auction_volumes,
-                auction_date: p.auction_date,
+                auction_volumes,
+                auction_date,
                 ..Default::default()
             }),
             data_path,
@@ -59,6 +65,7 @@ impl AppState {
                 last_sync: inner.last_sync.clone(),
                 auction_volumes: inner.auction_volumes.clone(),
                 auction_date: inner.auction_date.clone(),
+                auction_unit: Some("cny".into()),
             },
         );
     }
@@ -69,7 +76,7 @@ impl AppState {
         if !inner.auction_date.is_empty() {
             for q in quotes.iter_mut() {
                 if is_cn_market(&q.market) {
-                    q.auction_volume = inner
+                    q.auction_amount = inner
                         .auction_volumes
                         .get(&format!("{}:{}", q.market, q.code))
                         .copied();
@@ -250,7 +257,7 @@ pub fn spawn_quote_engine(app: tauri::AppHandle, state: std::sync::Arc<AppState>
                             if !inner.auction_date.is_empty() {
                                 for q in qs.iter_mut() {
                                     if is_cn_market(&q.market) {
-                                        q.auction_volume = inner
+                                        q.auction_amount = inner
                                             .auction_volumes
                                             .get(&format!("{}:{}", q.market, q.code))
                                             .copied();
@@ -301,7 +308,7 @@ pub fn spawn_auction_backfill(app: tauri::AppHandle, state: std::sync::Arc<AppSt
             }
             let mut filled: Vec<(String, String, f64)> = Vec::new();
             for (market, code, symbol) in missing {
-                if let Some(vol) = crate::kline::fetch_auction_volume(&client, &symbol, &today).await {
+                if let Some(vol) = crate::kline::fetch_auction_amount(&client, &symbol, &today).await {
                     filled.push((market, code, vol));
                 }
                 tokio::time::sleep(std::time::Duration::from_millis(150)).await;

@@ -26,8 +26,9 @@ const fmt = (v: number | undefined, digits = 2) =>
 
 const fmtAuction = (v: number | null | undefined) => {
   if (v === undefined || v === null || Number.isNaN(v)) return "--";
-  if (v >= 10000) return `${(v / 10000).toFixed(2)}万手`;
-  return `${Math.round(v)}手`;
+  if (v >= 1e8) return `${(v / 1e8).toFixed(2)}亿`;
+  if (v >= 1e4) return `${(v / 1e4).toFixed(0)}万`;
+  return v.toFixed(0);
 };
 
 function Th({ label, k, sort, onSort, flex }: { label: string; k?: SortKey; sort?: SortState; onSort?: (key: SortKey) => void; flex?: number }) {
@@ -59,7 +60,7 @@ export default function StockList({ rows, sort, onSort, editMode, onOpenDetail, 
         <Th label="现价" k="price" sort={sort} onSort={onSort} flex={1} />
         <Th label="最低" k="low" sort={sort} onSort={onSort} flex={0.9} />
         <Th label="最高" k="high" sort={sort} onSort={onSort} flex={0.9} />
-        <Th label="竞价量" k="auction" sort={sort} onSort={onSort} flex={0.9} />
+        <Th label="竞价额" k="auction" sort={sort} onSort={onSort} flex={0.9} />
         <Th label="涨跌幅" k="pct" sort={sort} onSort={onSort} flex={1.1} />
         {editMode && <div style={{ width: 34 }} />}
       </div>
@@ -92,7 +93,7 @@ export default function StockList({ rows, sort, onSort, editMode, onOpenDetail, 
                   {fmt(quote?.high)}
                 </div>
                 <div style={{ flex: 0.9, textAlign: "right", fontSize: 12, color: "var(--text-dim)" }}>
-                  {fmtAuction(quote?.auction_volume)}
+                  {fmtAuction(quote?.auction_amount)}
                 </div>
                 <div className="pct-block" style={{ flex: 1.1 }}>
                   <span className={`pct-pill ${bg(pct)} ${cls(pct)}`}>

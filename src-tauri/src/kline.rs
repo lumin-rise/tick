@@ -111,9 +111,9 @@ async fn fetch_minute(client: &reqwest::Client, symbol: &str) -> Result<KlineDat
     Ok(KlineData { prev_close, items })
 }
 
-/// 拉取当日竞价量（手）：校验分时数据是 today 当天的，取第一根(09:30)的量。
+/// 拉取当日竞价金额（元）：校验分时数据是 today 当天的，取第一根(09:30)的累计成交额。
 /// 数据不是今天（如盘前拉到昨日数据）返回 None。
-pub async fn fetch_auction_volume(client: &reqwest::Client, symbol: &str, today: &str) -> Option<f64> {
+pub async fn fetch_auction_amount(client: &reqwest::Client, symbol: &str, today: &str) -> Option<f64> {
     let url = format!("https://web.ifzq.gtimg.cn/appstock/app/minute/query?code={symbol}");
     let resp = client
         .get(&url)
@@ -136,8 +136,8 @@ pub async fn fetch_auction_volume(client: &reqwest::Client, symbol: &str, today:
         .get("data")?.get("data")?
         .as_array()?.first()?
         .as_str()?;
-    // "0930 价格 累计量(手) 累计额"
-    first.split_whitespace().nth(2)?.parse().ok()
+    // "0930 价格 累计量(手) 累计额(元)"
+    first.split_whitespace().nth(3)?.parse().ok()
 }
 
 fn str_field(arr: &[Value], i: usize) -> String {

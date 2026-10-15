@@ -16,12 +16,15 @@ pub struct Persisted {
     pub settings: Settings,
     #[serde(default)]
     pub last_sync: Option<String>,
-    /// 竞价量（手），key: "SH:600519"
+    /// 竞价金额（元），key: "SH:600519"
     #[serde(default)]
     pub auction_volumes: HashMap<String, f64>,
-    /// 竞价量所属交易日（YYYYMMDD），跨日自动清空
+    /// 竞价数据所属交易日（YYYYMMDD），跨日自动清空
     #[serde(default)]
     pub auction_date: String,
+    /// 竞价数据单位标记：cny=金额（当前）；缺失=旧版手数数据，加载时清空
+    #[serde(default)]
+    pub auction_unit: Option<String>,
 }
 
 pub fn load(path: &PathBuf) -> Persisted {

@@ -102,7 +102,7 @@ export default function App() {
         q === "price" ? r.quote?.price
         : q === "low" ? r.quote?.low
         : q === "high" ? r.quote?.high
-        : q === "auction" ? r.quote?.auction_volume ?? undefined
+        : q === "auction" ? r.quote?.auction_amount ?? undefined
         : r.quote?.change_pct;
       const va = val(a), vb = val(b);
       if (va === undefined && vb === undefined) return 0;
